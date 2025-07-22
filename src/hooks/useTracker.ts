@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {VITE_API_KEY} from "../constants";
+import {useQuery} from "@tanstack/react-query";
 
 interface TrackerResponse {
     ip:string;
@@ -18,10 +19,15 @@ interface TrackerResponse {
     isp:string;
 }
 
-export const useTracker = async (ip_address: string): Promise<TrackerResponse> => {
+ const useTracker = async (ip_address: string): Promise<TrackerResponse> => {
     const response = await axios.get<TrackerResponse>(
         `https://geo.ipify.org/api/v2/country?apiKey=${VITE_API_KEY}&ipAddress=${ip_address}`
     );
 
     return response.data;
 };
+
+export const getTracker = ()=>{
+
+
+}
