@@ -1,13 +1,20 @@
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-import {GOOGLE_API_KEY} from meta.
+import "leaflet/dist/leaflet.css";
+import {MapContainer,TileLayer} from "react-leaflet";
 
-function App() {
+const App = ()=>{
+  // @ts-ignore
+  return(
+      <div>
+          <MapContainer center={[48.85, 2.356]} zoom={13} className={'h-[50vh] w-full'}>
+              <TileLayer
+                  url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
 
-  return (
-      <div style={{ height: "100vh", width: "100%" }}>
-    <LoadScript googleMapsApiKey={}
+
+              />
+
+          </MapContainer>
+
       </div>
-  );
+  )
 }
-
 export default App;
