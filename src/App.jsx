@@ -6,6 +6,7 @@ import {useState} from "react";
 import {ChevronRight} from "lucide-react";
 import {useMutation} from "@tanstack/react-query";
 import useTracker from "./hooks/useTracker.js";
+import {notify} from "./constants/notify.js";
 
 const App = ()=>{
 
@@ -18,7 +19,7 @@ const App = ()=>{
     const handleSubmit = ()=>{
 
         if(!address) return;
-        mutate(address)
+        mutate(address,{onError:(error)=>{notify(error.message,"error")}})
 
 
     }
@@ -49,29 +50,36 @@ const App = ()=>{
                       </button>
               </form>
           </div>
-          <MapContainer
-              style={{
-                  height:"70vh"
-              }}
-              center={[48.85, 2.356]} zoom={13} className={'w-full'}>
-              <TileLayer
-                  url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-
-          </MapContainer>
           <div>
-            <div>
-                {isPending ? <p className={'text-white'}>Loading</p>:(
-                    <div className={'bg-white h-12 absolute top-30 translate-x-[30%]'}>
-                        <p>
-                            {data?.isp}
-                        </p>
-                    </div>
-                )}
+              <MapContainer
+                  style={{
+                      height:"70vh"
+                  }}
+                  center={[48.85, 2.356]} zoom={13} className={'w-full'}>
+                  <TileLayer
+                      url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
 
-            </div>
+              </MapContainer>
+
           </div>
 
+          <div className={'absolute top-10'}>
+              {isPending ? <p className={'text-white'}>Loading</p>:(
+                  <div className={'bg-white flex gap-10 h-[330px] p-5 shadow absolute top-30 rounded-md translate-x-[50%]'}>
+                      <div className={'border border-r'}>
+                          <p className={'text-xs'}>IP ADDRESS</p>
+                          <p>{data?.isp}</p>
+                      </div>
+
+                      <div>
+                          <p className={'text-xs'}>LOCATION</p>
+                          <p>{data?.location?.country}</p>
+                      </div>
+                  </div>
+              )}
+
+          </div>
       </section>
   )
 }
