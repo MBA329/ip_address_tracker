@@ -39,6 +39,7 @@ const App = ()=>{
               <form action={handleSubmit} className={'flex'}>
                   <input
                       value={address}
+                      placeholder={"Search for  any ip address or domain"}
                       onChange={(event)=>{setAddress(event.target.value)}}
                 className={'bg-white text-gray-900 rounded-l focus:outline-none md:w-xs p-4 h-[40px]'}
                   type={'text '}/>
