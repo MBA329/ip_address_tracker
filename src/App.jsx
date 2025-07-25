@@ -1,14 +1,16 @@
 import "leaflet/dist/leaflet.css";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer,Marker,Popup } from "react-leaflet";
 import bg_desktop from "./assets/images/pattern-bg-desktop.png";
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import useTracker from "./hooks/useTracker.js";
 import { notify } from "./constants/notify.js";
-
+import {Toaster} from "sonner";
+import ChangeView from "./hooks/useMap.js";
 const App = () => {
     const [address, setAddress] = useState("");
+    const [coords,setCoords] = useState([48.85, 2.356])
 
     const { mutate, data, isPending } = useMutation({
         mutationFn: useTracker,
@@ -23,11 +25,36 @@ const App = () => {
             onError: (error) => {
                 notify(error.message, "error");
             },
+            onSuccess:(data)=>{
+                const lat = data.lat || 54.23;
+                const lng = data.lng || 54.23;
+                setCoords([lat,lng]);
+
+            }
         });
     };
 
     return (
+
         <section className="relative">
+            <Toaster
+                position="top-center"
+                toastOptions={{
+                    className: "rounded-xl border border-gray-200 shadow-lg",
+                    style: {
+
+
+                        fontWeight: "500",
+                    },
+                    success: {
+                        className: " text-green-500 border-green",
+                    },
+                    error: {
+                        className: "text-red-500",
+                    },
+                }}
+            />
+
             {/* Top Hero Section */}
             <div
                 style={{
@@ -37,7 +64,7 @@ const App = () => {
                 }}
                 className="flex flex-col shadow   items-center gap-4"
             >
-                <p className="text-white text-2xl  md:text-4xl font-bold">
+                <p className="text-white text-2xl mt-4  md:text-4xl font-bold">
                     IP Address Tracker
                 </p>
                 <form
@@ -70,34 +97,33 @@ const App = () => {
             <div
                 style={{ zIndex: 1000 }}
                 className="absolute flex items-center shadow-lg left-1/2 -translate-x-1/2 top-[22vh]
-             bg-white h-[100px]  mx-auto p-5 w-[80vw]
+             bg-white md:h-[100px]  mx-auto  md:w-[80vw] w-[50vw]
               rounded-md"
             >
                 {isPending ? (
                     <p className={'text-center'}>Loading...</p>
                 ) : (
-                    <div className={'flex items-center w-full justify-evenly my-auto gap-4 '}>
-                        <div className=" p-4">
+                    <div className={'flex flex-col md:flex-row items-center p-2 w-full justify-evenly my-auto gap-3 md:gap-4 '}>
+                        <div className=" md:p-4 flex flex-col items-center justify-center gap-3">
                             <p className="text-xs text-gray-500">IP ADDRESS</p>
-                            <p>{data?.ip || "—"}</p>
+                            <p className={'font-bold text-lg'}>{data?.ip || "—"}</p>
 
                         </div>
 
-                        <div className={'w-2 bg-gray-900/30 h-full m-5'}></div>
 
-                        <div className=" p-4">
+                        <div className=" md:p-4 flex flex-col items-center justify-center md:gap-3">
                             <p className="text-xs text-gray-500">LOCATION</p>
-                            <p>{data?.location?.country || "—"}</p>
+                            <p className={'font-bold text-lg'}>{data?.location?.country || "—"}</p>
                         </div>
 
-                        <div className={'m-5'}
+                        <div className={'items-center  flex flex-col md:gap-3'}
                         >
-                            <p className="text-xs text-gray-500">ISP</p>
-                            <p>{data?.isp || "—"}</p>
-                        </div>
-                        <div>
                             <p className="text-xs text-gray-500">TIMEZONE</p>
-                            <p></p>
+                            <p className={'font-bold text-lg'}>{data?.location.timezone || "—"}</p>
+                        </div>
+                        <div className={'flex flex-col items-center justify-center md:gap-3'}>
+                            <p className="text-xs text-gray-500">ISP</p>
+                            <p className={'font-bold text-lg'}>{data?.isp || "—"}</p>
                         </div>
                     </div>
                 )}
@@ -109,12 +135,21 @@ const App = () => {
                     height: "70vh",
                     zIndex:"4"
                 }}
-                center={[48.85, 2.356]}
+                center={coords}
                 zoom={13}
                 className="w-full"
 
             >
+                <ChangeView coordinate={coords}/>
                 <TileLayer url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                {
+                    data?.location?.lat && data?.location?.lng && (
+                        <Marker
+                        position={coords}
+
+                        />
+                    )
+                }
             </MapContainer>
         </section>
     );
