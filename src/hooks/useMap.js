@@ -6,7 +6,7 @@ const ChangeView = ({coordinate})=>{
 
     useEffect(()=>{
         if(coordinate){
-            map.flyTo(coordinate,13,{animate:true})
+            map.flyTo(coordinate,13,{animate:true,duration:1.5})
         }
     },[coordinate,map])
     return null;

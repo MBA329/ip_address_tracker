@@ -8,7 +8,25 @@ import useTracker from "./hooks/useTracker.js";
 import { notify } from "./constants/notify.js";
 import {Toaster} from "sonner";
 import ChangeView from "./hooks/useMap.js";
+import {Icon} from "leaflet"
+import Location from "./assets/images/location-pin.png"
+
 const App = () => {
+
+
+    const markers = [
+        { geocode:[48.68,2.3522],popup:"hello, I am a pop up"},
+        {
+            geocode:[48.68,2.3522],popup:"hello, I am a pop up"
+        },
+        {geocode:[48.68,2.3522],popup:"hello, I am a pop up"}
+
+
+    ]
+    const customIcon = new Icon({
+        iconUrl: Location,
+        iconSize: [35, 35],
+    })
     const [address, setAddress] = useState("");
     const [coords,setCoords] = useState([48.85, 2.356])
 
@@ -33,6 +51,7 @@ const App = () => {
             }
         });
     };
+
 
     return (
 
@@ -123,7 +142,7 @@ const App = () => {
                         </div>
                         <div className={'flex flex-col items-center justify-center md:gap-3'}>
                             <p className="text-xs text-gray-500">ISP</p>
-                            <p className={'font-bold text-lg'}>{data?.isp || "—"}</p>
+                            <p className={'font-bold text-center text-lg'}>{data?.isp || "—"}</p>
                         </div>
                     </div>
                 )}
@@ -146,10 +165,12 @@ const App = () => {
                     data?.location?.lat && data?.location?.lng && (
                         <Marker
                         position={coords}
-
                         />
                     )
                 }
+                {markers.map((marker)=>(
+                    <Marker position={marker.geocode} />
+                ))}
             </MapContainer>
         </section>
     );
